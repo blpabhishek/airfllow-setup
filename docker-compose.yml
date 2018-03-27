@@ -1,0 +1,26 @@
+version: '2'
+services:
+    postgres:
+        image: postgres:9.6
+        restart: always
+        environment:
+            - POSTGRES_USER=airflow
+            - POSTGRES_PASSWORD=airflow
+            - POSTGRES_DB=airflow
+        volumes:
+            - ./data/postgres:/var/lib/postgresql/data
+    webserver:
+        image: abhishek
+        restart: always
+        depends_on:
+            - postgres
+        environment:
+            - LOAD_EX=n
+            - EXECUTOR=Local
+            - FERNET_KEY=IudL3DKugPKnOii5dBjGrtF0e_n27az7hbkm26J404k=
+            - AIRFLOW__CODE__LOGGING_LEVEL = WARN
+        volumes:
+            - ./dags:/usr/local/airflow/dags
+        ports:
+            - "8080:8080"
+        command: webserver
